@@ -3048,7 +3048,7 @@ void MainWindow::serverDisconnected(QAbstractSocket::SocketError err, QString re
 			qaServerDisconnect->setEnabled(true);
 			g.sh->setConnectionInfo(host, port, uname, pw);
 			on_Reconnect_timeout();
-		} else if (!matched && g.s.bReconnect && ! reason.isEmpty()) {
+		} else if (!matched && g.s.bReconnect /* && ! reason.isEmpty() */ ) {
 			qaServerDisconnect->setEnabled(true);
 			if (bRetryServer) {
 				qtReconnect->start();
