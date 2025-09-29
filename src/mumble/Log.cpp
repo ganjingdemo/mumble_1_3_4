@@ -491,8 +491,39 @@ void Log::log(MsgType mt, const QString &console, const QString &terse, bool own
 		} else if (! g.mw->qteLog->document()->isEmpty()) {
 			tc.insertBlock();
 		}
+
 		tc.insertHtml(Log::msgColor(QString::fromLatin1("[%1] ").arg(Qt::escape(dt.time().toString())), Log::Time));
 		validHtml(console, &tc);
+
+		const QString datetimeString = dt.toString(QString::fromUtf8("yyyy-MM-dd HH:mm:ss ")) + dt.timeZone().displayName(QTimeZone::StandardTime, QTimeZone::OffsetName);
+
+		QString logContent = datetimeString + QString::fromUtf8(" ") + plain;
+		const QString file_name = QString::fromUtf8("log_") + dt.date().toString(QString::fromUtf8("yyyy_MM_dd")) + QString::fromUtf8(".txt");
+
+		FILE *fp = NULL;
+		
+		QFileInfo fileInfo(QString::fromUtf8("mumble_enable_log"));
+
+		if (fileInfo.exists())
+		{
+			QString log_path = QString::fromUtf8("log");
+
+			QDir log_dir(log_path);
+			if(!log_dir.exists())
+			{
+				QDir().mkpath(log_path);
+			}
+			QString adjust_file_name = log_path + QString::fromUtf8("/") + file_name;
+			fp=fopen(adjust_file_name.toStdString().c_str(), "a");
+		
+
+			if(NULL != fp)
+			{
+				fprintf(fp, "%s\n", logContent.toStdString().c_str());
+				fclose(fp);
+			}
+		}
+
 		tc.movePosition(QTextCursor::End);
 		g.mw->qteLog->setTextCursor(tc);
 
